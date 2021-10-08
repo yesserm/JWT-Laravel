@@ -90,21 +90,21 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $user = User::create([
+        $user = User::create(array_merge(
             $validator->validate(),
-            ['password' => bcrypt($request->password)],
-        ]);
+            ['password' => bcrypt($request->password)]
+        ));
+
         return response()->json([
             'message' => 'Usuario creado exitosamente',
             'data' => $user
         ], 201);
-        ]);
     }
 }
